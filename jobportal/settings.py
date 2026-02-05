@@ -36,8 +36,6 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = ["*"]
 
-# ALLOWED_HOSTS = ["jobportal-bz1x.onrender.com", "localhost", "127.0.0.1"]
-
 # Application definition
 
 INSTALLED_APPS = [
