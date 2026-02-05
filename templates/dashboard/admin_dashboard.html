@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+
+    <!-- Dashboard specific CSS (NO auth.css here) -->
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <h1>Admin Dashboard</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <p id="total-users">--</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total Jobs</h3>
+            <p id="total-jobs">--</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total Applications</h3>
+            <p id="total-applications">--</p>
+        </div>
+    </div>
+
+    
+</div>
+
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,743 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="companies-container">
+    <center> <header>
+        <h1 class="page-title">🏢 Top IT Companies Worldwide</h1>
+        <p class="page-subtitle">Explore leading technology companies and visit their official websites</p>
+    </header>
+</center> 
+    <!-- Search and Filter Section -->
+    <div class="controls-section">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search companies by name or category..." class="search-box">
+        </div>
+        
+        <div class="filter-section">
+            <h3>Filter by Category:</h3>
+            <div class="filter-options">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-globe"></i> All Companies
+                </button>
+                <button class="filter-btn" data-filter="software">
+                    <i class="fas fa-code"></i> Software
+                </button>
+                <button class="filter-btn" data-filter="cloud">
+                    <i class="fas fa-cloud"></i> Cloud & Services
+                </button>
+                <button class="filter-btn" data-filter="hardware">
+                    <i class="fas fa-microchip"></i> Hardware
+                </button>
+                <button class="filter-btn" data-filter="social">
+                    <i class="fas fa-users"></i> Social Media
+                </button>
+                <button class="filter-btn" data-filter="ecommerce">
+                    <i class="fas fa-shopping-cart"></i> E-commerce
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Companies Grid -->
+    <div class="companies-grid" id="companiesGrid">
+        <!-- Companies will be dynamically loaded here -->
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <i class="fas fa-building stat-icon"></i>
+            <h3 class="stat-number" id="totalCompanies">12</h3>
+            <p class="stat-label">Total Companies</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar-alt stat-icon"></i>
+            <h3 class="stat-number" id="avgFounded">1987</h3>
+            <p class="stat-label">Average Founded Year</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-industry stat-icon"></i>
+            <h3 class="stat-number">6</h3>
+            <p class="stat-label">Categories</p>
+        </div>
+    </div>
+</div>
+
+<!-- External CSS for Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* Main Container */
+    .companies-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+    }
+
+    /* Header Styles */
+    .companies-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-title {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .page-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Controls Section */
+    .controls-section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-container {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #667eea;
+        font-size: 1.2rem;
+    }
+
+    .search-box {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 2px solid #e1e8ed;
+        border-radius: 50px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .search-box:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: white;
+    }
+
+    /* Filter Section */
+    .filter-section h3 {
+        margin-bottom: 1rem;
+        color: #2c3e50;
+        text-align: center;
+        font-size: 1.3rem;
+    }
+
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        justify-content: center;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .filter-btn {
+        padding: 0.8rem 1.5rem;
+        border: 2px solid #e1e8ed;
+        background: white;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #5a67d8;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-btn:hover {
+        transform: translateY(-2px);
+        border-color: #5a67d8;
+        box-shadow: 0 5px 15px rgba(90, 103, 216, 0.1);
+    }
+
+    .filter-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Companies Grid */
+    .companies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .company-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    .company-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .company-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .company-image {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .company-image img {
+        max-width: 80%;
+        max-height: 140px;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .company-card:hover .company-image img {
+        transform: scale(1.1);
+    }
+
+    .company-info {
+        padding: 1.5rem;
+        flex-grow: 1;
+    }
+
+    .company-name {
+        font-size: 1.4rem;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .company-name i {
+        color: #667eea;
+    }
+
+    .company-founded {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .company-desc {
+        color: #6c757d;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .company-categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .category-tag {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .company-actions {
+        padding: 0 1.5rem 1.5rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .visit-btn {
+        flex: 1;
+        padding: 0.8rem;
+        text-align: center;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        font-size: 0.95rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .visit-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 4rem;
+        padding: 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .companies-grid {
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2.2rem;
+        }
+        
+        .companies-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .filter-options {
+            flex-direction: column;
+        }
+        
+        .filter-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .stats-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .companies-container {
+            padding: 1rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+        }
+        
+        .company-actions {
+            flex-direction: column;
+        }
+        
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    /* Animation for company cards */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .company-card {
+        animation: fadeInUp 0.5s ease forwards;
+        animation-delay: calc(var(--card-index, 0) * 0.1s);
+        opacity: 0;
+    }
+</style>
+
+<script>
+    // Companies data with images and links
+    const companies = [
+        {
+            id: 1,
+            name: "Microsoft",
+            website: "https://www.microsoft.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+            category: ["software", "cloud"],
+            description: "World's leading software company known for Windows, Office, Azure, and enterprise solutions.",
+            founded: 1975
+        },
+        {
+            id: 2,
+            name: "Apple",
+            website: "https://www.apple.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+            category: ["hardware", "software"],
+            description: "Innovator in consumer electronics, software, and online services. Creator of iPhone, Mac, iPad.",
+            founded: 1976
+        },
+        {
+            id: 3,
+            name: "Google",
+            website: "https://www.google.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+            category: ["software", "cloud"],
+            description: "Dominant search engine and provider of cloud computing, software, and hardware.",
+            founded: 1998
+        },
+        {
+            id: 4,
+            name: "Amazon",
+            website: "https://www.amazon.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+            category: ["ecommerce", "cloud"],
+            description: "Global e-commerce leader and pioneer in cloud computing with AWS.",
+            founded: 1994
+        },
+        {
+            id: 5,
+            name: "Meta",
+            website: "https://www.meta.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
+            category: ["social", "software"],
+            description: "Parent company of Facebook, Instagram, WhatsApp, and leader in social technology.",
+            founded: 2004
+        },
+        {
+            id: 6,
+            name: "Oracle",
+            website: "https://www.oracle.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg",
+            category: ["software", "cloud"],
+            description: "Global leader in database software, cloud solutions, and enterprise software.",
+            founded: 1977
+        },
+        {
+            id: 7,
+            name: "IBM",
+            website: "https://www.ibm.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
+            category: ["software", "hardware", "cloud"],
+            description: "Pioneer in computing, AI, quantum computing, and enterprise solutions.",
+            founded: 1911
+        },
+        {
+            id: 8,
+            name: "Intel",
+            website: "https://www.intel.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Intel_logo_%282006-2020%29.svg",
+            category: ["hardware"],
+            description: "World's largest semiconductor chip manufacturer and computing innovator.",
+            founded: 1968
+        },
+        {
+            id: 9,
+            name: "Adobe",
+            website: "https://www.adobe.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Adobe_Corporate_logo.svg",
+            category: ["software"],
+            description: "Creator of Photoshop, Illustrator, and leader in creative software solutions.",
+            founded: 1982
+        },
+        {
+            id: 10,
+            name: "Salesforce",
+            website: "https://www.salesforce.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg",
+            category: ["software", "cloud"],
+            description: "World's #1 CRM platform and leader in cloud-based business applications.",
+            founded: 1999
+        },
+        {
+            id: 11,
+            name: "Tesla",
+            website: "https://www.tesla.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png",
+            category: ["hardware", "software"],
+            description: "Electric vehicle manufacturer and leader in sustainable energy solutions.",
+            founded: 2003
+        },
+        {
+            id: 12,
+            name: "Netflix",
+            website: "https://www.netflix.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+            category: ["software", "cloud"],
+            description: "World's leading streaming entertainment service with original content.",
+            founded: 1997
+        },
+        {
+            id: 13,
+            name: "Samsung",
+            website: "https://www.samsung.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg",
+            category: ["hardware", "software"],
+            description: "Global leader in electronics, smartphones, semiconductors, and home appliances.",
+            founded: 1938
+        },
+        {
+            id: 14,
+            name: "Cisco",
+            website: "https://www.cisco.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg",
+            category: ["hardware", "software"],
+            description: "Worldwide leader in networking, cybersecurity, and collaboration solutions.",
+            founded: 1984
+        },
+        {
+            id: 15,
+            name: "Twitter",
+            website: "https://www.twitter.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg",
+            category: ["social", "software"],
+            description: "Global social media platform for real-time news and conversation.",
+            founded: 2006
+        },
+        {
+            id: 16,
+            name: "LinkedIn",
+            website: "https://www.linkedin.com",
+            image: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
+            category: ["social", "software"],
+            description: "World's largest professional network for career development and business.",
+            founded: 2002
+        }
+    ];
+
+    // Function to render companies
+    function renderCompanies(filter = 'all') {
+        const grid = document.getElementById('companiesGrid');
+        grid.innerHTML = '';
+        
+        const filteredCompanies = filter === 'all' 
+            ? companies 
+            : companies.filter(company => company.category.includes(filter));
+        
+        // Update stats
+        updateStats(filteredCompanies);
+        
+        filteredCompanies.forEach((company, index) => {
+            const companyCard = document.createElement('div');
+            companyCard.className = 'company-card';
+            companyCard.style.setProperty('--card-index', index);
+            
+            // Get category icons
+            const categoryIcons = {
+                'software': 'fas fa-code',
+                'cloud': 'fas fa-cloud',
+                'hardware': 'fas fa-microchip',
+                'social': 'fas fa-users',
+                'ecommerce': 'fas fa-shopping-cart'
+            };
+            
+            companyCard.innerHTML = `
+                <div class="company-image">
+                    <img src="${company.image}" alt="${company.name} Logo" loading="lazy" 
+                         onerror="this.src='https://via.placeholder.com/300x150/667eea/ffffff?text=${company.name.replace(' ', '+')}'">
+                </div>
+                <div class="company-info">
+                    <h3 class="company-name">
+                        <i class="fas fa-building"></i> ${company.name}
+                    </h3>
+                    <p class="company-founded">
+                        <i class="fas fa-calendar-alt"></i> Founded: ${company.founded}
+                    </p>
+                    <p class="company-desc">${company.description}</p>
+                    <div class="company-categories">
+                        ${company.category.map(cat => 
+                            `<span class="category-tag">
+                                <i class="${categoryIcons[cat] || 'fas fa-tag'}"></i> ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+                            </span>`
+                        ).join('')}
+                    </div>
+                </div>
+                <div class="company-actions">
+                    <a href="${company.website}" target="_blank" rel="noopener noreferrer" class="visit-btn">
+                        <i class="fas fa-external-link-alt"></i> Visit Website
+                    </a>
+                </div>
+            `;
+            
+            grid.appendChild(companyCard);
+        });
+    }
+
+    // Function to update statistics
+    function updateStats(filteredCompanies) {
+        const totalCompanies = filteredCompanies.length;
+        document.getElementById('totalCompanies').textContent = totalCompanies;
+        
+        if (totalCompanies > 0) {
+            const avgFounded = Math.round(
+                filteredCompanies.reduce((sum, company) => sum + company.founded, 0) / totalCompanies
+            );
+            document.getElementById('avgFounded').textContent = avgFounded;
+        }
+    }
+
+    // Search functionality
+    function searchCompanies() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        
+        if (!searchTerm) {
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            renderCompanies(activeFilter);
+            return;
+        }
+        
+        const grid = document.getElementById('companiesGrid');
+        const companyCards = grid.querySelectorAll('.company-card');
+        let visibleCount = 0;
+        
+        companyCards.forEach(card => {
+            const companyName = card.querySelector('.company-name').textContent.toLowerCase();
+            const companyDesc = card.querySelector('.company-desc').textContent.toLowerCase();
+            const categories = card.querySelectorAll('.category-tag');
+            let hasCategoryMatch = false;
+            
+            categories.forEach(tag => {
+                if (tag.textContent.toLowerCase().includes(searchTerm)) {
+                    hasCategoryMatch = true;
+                }
+            });
+            
+            if (companyName.includes(searchTerm) || companyDesc.includes(searchTerm) || hasCategoryMatch) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        updateStats(Array.from(companyCards).filter(card => card.style.display !== 'none').length);
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        // Render all companies initially
+        renderCompanies();
+        
+        // Filter buttons event listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                const filter = e.target.dataset.filter;
+                renderCompanies(filter);
+                
+                // Clear search
+                document.getElementById('searchInput').value = '';
+            });
+        });
+        
+        // Search input event listener
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', searchCompanies);
+        
+        // Debounce search for better performance
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(searchCompanies, 300);
+        });
+        
+        // Add keyboard shortcut for search (Ctrl/Cmd + F)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    });
+
+    // Handle image errors
+    window.addEventListener('error', function(e) {
+        if (e.target.tagName === 'IMG') {
+            e.target.src = 'https://via.placeholder.com/300x150/667eea/ffffff?text=Logo';
+        }
+    }, true);
+</script>
+
+
+
+
+
+{% endblock %}
