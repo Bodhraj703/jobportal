@@ -34,9 +34,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # DEBUG = True
 DEBUG = os.getenv("DEBUG") == "True"
 
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
-ALLOWED_HOSTS = ["jobportal-bz1x.onrender.com", "localhost", "127.0.0.1"]
+# ALLOWED_HOSTS = ["jobportal-bz1x.onrender.com", "localhost", "127.0.0.1"]
 
 # Application definition
 
@@ -100,14 +100,12 @@ WSGI_APPLICATION = 'jobportal.wsgi.application'
 #     }
 # }
 
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=False  # local ke liye
+    "default": dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
     )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
