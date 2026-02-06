@@ -161,27 +161,16 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 # EMAIL_HOST_PASSWORD = 'wchzaeqisffvthro'
 
 
-# ================== EMAIL SETTINGS ==================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-# Detect DEBUG safely
-DEBUG = os.getenv("DEBUG", "True").strip().lower() == "true"
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
 
-# Use console backend on free tier (prints OTP in logs)
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    # Production: Use SMTP backend
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('EMAIL_HOST')  # e.g., smtp.sendgrid.net
-    EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').strip().lower() == 'true'
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-# Default "from" email
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@yoursite.com')
-
-
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 
 CSRF_TRUSTED_ORIGINS = [
