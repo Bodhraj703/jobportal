@@ -14,6 +14,7 @@ from accounts.utils import generate_jwt
 from .forms import ProfileImageForm
 from django.contrib.auth.decorators import user_passes_test
 
+# =============sendgrid email=========================================
 # @csrf_exempt
 # def signup_view(request):
 #     is_api = request.headers.get('Accept') == 'application/json'
@@ -53,27 +54,36 @@ from django.contrib.auth.decorators import user_passes_test
 #                 is_active=False,
 #                 otp=otp
 #             )
-#             print("OTP:", otp) 
+
+#             # ✅ SEND OTP EMAIL (SendGrid)
+#             send_mail(
+#                 subject="Your OTP Verification Code",
+#                 message=f"Your OTP is {otp}. It is valid for 3 minutes.",
+#                 from_email=settings.DEFAULT_FROM_EMAIL,
+#                 recipient_list=[user.email],
+#                 fail_silently=False,
+#             )
+
 #             request.session['otp_email'] = user.email
 #             request.session['otp_attempts'] = 0
 #             request.session['otp_time'] = time.time()
 
 #             if is_api:
-#                 return JsonResponse({'success': True, 'message': 'OTP sent', 'otp': otp}, status=201)
+#                 return JsonResponse({'success': True, 'message': 'OTP sent to email'}, status=201)
 
-#             return render(request, 'auth/signup.html', {'show_otp_popup': True,
-#                 'debug_otp': otp})
+#             return render(request, 'auth/signup.html', {'show_otp_popup': True})
 
 #         return render(request, 'auth/signup.html')
 
 #     except Exception as e:
 #         print('SIGNUP ERROR:', e)
 #         if is_api:
-#             return JsonResponse(
-#                 {'error': 'Internal server error'},
-#                 status=500
-#             )
+#             return JsonResponse({'error': 'Internal server error'}, status=500)
 #         return render(request, 'auth/signup.html', {'error': 'Something went wrong'})
+
+
+
+# =================================for console=========================
 
 @csrf_exempt
 def signup_view(request):
@@ -101,6 +111,7 @@ def signup_view(request):
                     )
                 return render(request, 'auth/signup.html', {'error': 'Email already exists'})
 
+            # ✅ Generate OTP
             otp = str(random.randint(100000, 999999))
 
             user = User.objects.create_user(
@@ -115,23 +126,27 @@ def signup_view(request):
                 otp=otp
             )
 
-            # ✅ SEND OTP EMAIL (SendGrid)
-            send_mail(
-                subject="Your OTP Verification Code",
-                message=f"Your OTP is {otp}. It is valid for 3 minutes.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+            # ❌ Disable email sending
+            # send_mail(
+            #     subject="Your OTP Verification Code",
+            #     message=f"Your OTP is {otp}. It is valid for 3 minutes.",
+            #     from_email=settings.DEFAULT_FROM_EMAIL,
+            #     recipient_list=[user.email],
+            #     fail_silently=False,
+            # )
+
+            # ✅ Print OTP to console
+            print("OTP for", user.email, "is:", otp)
 
             request.session['otp_email'] = user.email
             request.session['otp_attempts'] = 0
             request.session['otp_time'] = time.time()
 
             if is_api:
-                return JsonResponse({'success': True, 'message': 'OTP sent to email'}, status=201)
+                # ✅ Optionally send OTP in API response for debugging
+                return JsonResponse({'success': True, 'message': 'OTP generated', 'otp': otp}, status=201)
 
-            return render(request, 'auth/signup.html', {'show_otp_popup': True})
+            return render(request, 'auth/signup.html', {'show_otp_popup': True, 'debug_otp': otp})
 
         return render(request, 'auth/signup.html')
 
